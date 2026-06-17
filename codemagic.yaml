@@ -52,6 +52,7 @@ workflows:
       cocoapods: default
       groups:
         - supabase_credentials   # SUPABASE_URL, SUPABASE_ANON_KEY — set in Codemagic dashboard
+        - ios_credentials        # Certificate (P12) + Provisioning Profile — set in Codemagic dashboard
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.arashdev.financeApp
@@ -60,11 +61,11 @@ workflows:
       - name: Flutter pub get
         script: flutter pub get
 
-      - name: Run tests
-        script: flutter test
+      - name: Set up code signing
+        script: xcode-project use-profiles
 
-      - name: Install CocoaPods
-        script: find . -name "Podfile" -execdir pod install \;
+      - name: Run tests
+        script: flutter test --no-pub
 
       - name: Build iOS IPA
         script: |
